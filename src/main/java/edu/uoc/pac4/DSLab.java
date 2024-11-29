@@ -1,11 +1,10 @@
 package edu.uoc.pac4;
 
 import edu.uoc.pac4.university.University;
-import edu.uoc.pac4.DSLabStatus;
-import java.util.Objects;
+import edu.uoc.pac4.university.UniversityException;
 
 public class DSLab {
-    public static final long MIN_CPU_REQUIRED = 1073741824L;
+    public static final long MIN_CPU_REQUIRED = 1_073_741_824L;
     private String name;
     private String description;
     private int versionMajor;
@@ -15,7 +14,7 @@ public class DSLab {
     private University university;
     private DSLabStatus status;
 
-    public DSLab(String name, String description, int versionMajor, int versionMinor, int versionPatch, long cpu, University university) throws DSLabException {
+    public DSLab(String name, String description, int versionMajor, int versionMinor, int versionPatch, long cpu, University university) throws DSLabException, UniversityException {
         setName(name);
         setDescription(description);
         setVersionMajor(versionMajor);
@@ -32,7 +31,7 @@ public class DSLab {
 
     public void setName(String name) throws DSLabException {
         if (name == null || name.trim().isEmpty()) {
-            throw new DSLabException(DSLabException.INVALID_NAME);
+            throw new DSLabException("[ERROR] Name cannot be null, empty or blank");
         }
         this.name = name.trim();
     }
@@ -43,7 +42,7 @@ public class DSLab {
 
     public void setDescription(String description) throws DSLabException {
         if (description == null) {
-            throw new DSLabException(DSLabException.INVALID_DESCRIPTION);
+            throw new DSLabException("[ERROR] Description cannot be null");
         }
         this.description = description;
     }
@@ -54,7 +53,7 @@ public class DSLab {
 
     public void setVersionMajor(int versionMajor) throws DSLabException {
         if (versionMajor < 0) {
-            throw new DSLabException(DSLabException.INVALID_VERSION_MAJOR);
+            throw new DSLabException("[ERROR] Major version cannot be negative");
         }
         this.versionMajor = versionMajor;
     }
@@ -65,7 +64,7 @@ public class DSLab {
 
     public void setVersionMinor(int versionMinor) throws DSLabException {
         if (versionMinor < 0) {
-            throw new DSLabException(DSLabException.INVALID_VERSION_MINOR);
+            throw new DSLabException("[ERROR] Minor version cannot be negative");
         }
         this.versionMinor = versionMinor;
     }
@@ -76,9 +75,13 @@ public class DSLab {
 
     public void setVersionPatch(int versionPatch) throws DSLabException {
         if (versionPatch < 0) {
-            throw new DSLabException(DSLabException.INVALID_VERSION_PATCH);
+            throw new DSLabException("[ERROR] Patch version cannot be negative");
         }
         this.versionPatch = versionPatch;
+    }
+
+    public String getVersion() {
+        return versionMajor + "." + versionMinor + "." + versionPatch;
     }
 
     public long getCpu() {
@@ -87,7 +90,7 @@ public class DSLab {
 
     public void setCpu(long cpu) throws DSLabException {
         if (cpu < MIN_CPU_REQUIRED) {
-            throw new DSLabException(DSLabException.NO_ENOUGH_CPU);
+            throw new DSLabException("[ERROR] This server does not have enough CPU");
         }
         this.cpu = cpu;
     }
@@ -98,7 +101,7 @@ public class DSLab {
 
     public void setUniversity(University university) throws DSLabException {
         if (university == null) {
-            throw new DSLabException(DSLabException.UNIVERSITY_NULL);
+            throw new DSLabException("[ERROR] University cannot be null");
         }
         this.university = university;
     }
@@ -109,10 +112,6 @@ public class DSLab {
 
     public void setStatus(DSLabStatus status) {
         this.status = status;
-    }
-
-    public String getVersion() {
-        return versionMajor + "." + versionMinor + "." + versionPatch;
     }
 
     @Override
@@ -126,19 +125,10 @@ public class DSLab {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DSLab dsLab = (DSLab) o;
-        return versionMajor == dsLab.versionMajor &&
-                versionMinor == dsLab.versionMinor &&
-                versionPatch == dsLab.versionPatch &&
-                Objects.equals(name, dsLab.name) &&
-                Objects.equals(university, dsLab.university);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, versionMajor, versionMinor, versionPatch, university);
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        DSLab dsLab = (DSLab) obj;
+        return name.equals(dsLab.name) && university.equals(dsLab.university);
     }
 }
